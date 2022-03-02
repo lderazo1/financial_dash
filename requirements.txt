@@ -13,6 +13,7 @@ dash-table==4.0.0
 engineering-notation==0.6.0
 Flask==2.0.3
 Flask-Compress==1.11
+gunicorn==19.9.0
 h11==0.13.0
 idna==3.3
 iniconfig==1.1.1
