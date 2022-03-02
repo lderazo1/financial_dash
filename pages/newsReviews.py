@@ -1,4 +1,4 @@
-from dash import html
+import dash_html_components as html
 from utils import Header
 
 

@@ -1,5 +1,5 @@
 import dash_core_components as dcc
-from dash import html
+import dash_html_components as html
 import plotly.graph_objs as go
 from utils import Header, make_dash_table
 import pandas as pd
