@@ -28,7 +28,9 @@ app.layout = html.Div(
 # Update page
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def display_page(pathname):
-    if pathname == "/dash-financial-report/price-performance":
+    if pathname =="/":
+        return "<h1>HOLA</h1>"
+    elif pathname == "/dash-financial-report/price-performance":
         return pricePerformance.create_layout(app)
     elif pathname == "/dash-financial-report/portfolio-management":
         return portfolioManagement.create_layout(app)
@@ -52,4 +54,4 @@ def display_page(pathname):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=True)
