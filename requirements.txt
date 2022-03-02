@@ -1,0 +1,4 @@
+wheel==0.37.1
+dash==2.2.0
+gunicorn==20.1.0
+pandas==1.4.1
