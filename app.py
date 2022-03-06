@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from logging import PlaceHolder
-from pydoc import classname
 from dash import Dash, dcc, html, Input, Output
 from plotly.express import data
 import dataservice
