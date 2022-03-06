@@ -1,26 +1,28 @@
-import dash_core_components as dcc
-import dash_html_components as html
-import plotly.graph_objs as go
-
+from dash import dcc, html
 from utils import Header, make_dash_table
-
-import pandas as pd
-import pathlib
+import dataservice
+import graphs
 
 # get relative data folder
-PATH = pathlib.Path(__file__).parent
-DATA_PATH = PATH.joinpath("../data").resolve()
 
+df = dataservice.get_selected_dataframe('CANTON','1FvE33JAUWO8mgzcoaZF7H1iYCEYm6da06rmEX8lGJaM')
+df_suelo = dataservice.get_selected_dataframe('Uso_S_Manabi','1LgCKDvc1JFc_F0pAzmHUNE0QeNHPc9VoU_NOton1tw0')
+geo = dataservice.get_geojson()
+df_2017 = dataservice.get_selected_dataframe('2017','1EOEmsm1R8ubMSXEcPBKbLF5dAOqVM5tTUIy702WSJmM')
+df_2018 = dataservice.get_selected_dataframe('2018','1EOEmsm1R8ubMSXEcPBKbLF5dAOqVM5tTUIy702WSJmM')
+df_2019 = dataservice.get_selected_dataframe('2019','1EOEmsm1R8ubMSXEcPBKbLF5dAOqVM5tTUIy702WSJmM')
+df_2020 = dataservice.get_selected_dataframe('2020','1EOEmsm1R8ubMSXEcPBKbLF5dAOqVM5tTUIy702WSJmM')
 
-df_fund_facts = pd.read_csv(DATA_PATH.joinpath("df_fund_facts.csv"))
-df_price_perf = pd.read_csv(DATA_PATH.joinpath("df_price_perf.csv"))
-
-
-def create_layout(app):
+def create_layout(app,value):
+    selection = df.loc[df['CANTON'] == value]
+    selection_map = geo.loc[geo['DPA_CANTON'] == str(selection['DPA_CANTON'].values[0])]
+    df_selected = df_suelo.loc[df_suelo['DPA_CANTON'] == selection['DPA_CANTON'].values[0]]
+    vab_selected = graphs.get_vab_values(df_2017,df_2018,df_2019,df_2020,selection)
+    df_vab_2020 = graphs.get_vab_sector_values(df_2020,selection)
     # Page layouts
     return html.Div(
         [
-            html.Div([Header(app)]),
+            html.Div([Header(app,value)]),
             # page 1
             html.Div(
                 [
@@ -29,19 +31,13 @@ def create_layout(app):
                         [
                             html.Div(
                                 [
-                                    html.H5("Product Summary"),
+                                    html.H5("Información"),
                                     html.Br([]),
-                                    html.P(
-                                        "\
-                                    As the industry’s first index fund for individual investors, \
-                                    the Calibre Index Fund is a low-cost way to gain diversified exposure \
-                                    to the U.S. equity market. The fund offers exposure to 500 of the \
-                                    largest U.S. companies, which span many different industries and \
-                                    account for about three-fourths of the U.S. stock market’s value. \
-                                    The key risk for the fund is the volatility that comes with its full \
-                                    exposure to the stock market. Because the Calibre Index Fund is broadly \
-                                    diversified within the large-capitalization market, it may be \
-                                    considered a core equity holding in a portfolio.",
+                                    html.H6("Extensión Territorial",
+                                        style={"color": "#ffffff"},
+                                        className="row",
+                                    ),
+                                    html.H6("Habitantes",
                                         style={"color": "#ffffff"},
                                         className="row",
                                     ),
@@ -51,117 +47,52 @@ def create_layout(app):
                         ],
                         className="row",
                     ),
-                    # Row 4
+                    # Row 3
                     html.Div(
                         [
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Fund Facts"], className="subtitle padded"
+                                        "Mapa",
+                                        className="subtitle padded",
                                     ),
-                                    html.Table(make_dash_table(df_fund_facts)),
+                                    dcc.Graph(figure=graphs.get_map_graph(selection_map)),
                                 ],
                                 className="six columns",
                             ),
                             html.Div(
                                 [
                                     html.H6(
-                                        "Average annual performance",
+                                        "Uso de Suelo",
                                         className="subtitle padded",
                                     ),
-                                    dcc.Graph(
-                                        id="graph-1",
-                                        figure={
-                                            "data": [
-                                                go.Bar(
-                                                    x=[
-                                                        "1 Year",
-                                                        "3 Year",
-                                                        "5 Year",
-                                                        "10 Year",
-                                                        "41 Year",
-                                                    ],
-                                                    y=[
-                                                        "21.67",
-                                                        "11.26",
-                                                        "15.62",
-                                                        "8.37",
-                                                        "11.11",
-                                                    ],
-                                                    marker={
-                                                        "color": "#97151c",
-                                                        "line": {
-                                                            "color": "rgb(255, 255, 255)",
-                                                            "width": 2,
-                                                        },
-                                                    },
-                                                    name="Calibre Index Fund",
-                                                ),
-                                                go.Bar(
-                                                    x=[
-                                                        "1 Year",
-                                                        "3 Year",
-                                                        "5 Year",
-                                                        "10 Year",
-                                                        "41 Year",
-                                                    ],
-                                                    y=[
-                                                        "21.83",
-                                                        "11.41",
-                                                        "15.79",
-                                                        "8.50",
-                                                    ],
-                                                    marker={
-                                                        "color": "#dddddd",
-                                                        "line": {
-                                                            "color": "rgb(255, 255, 255)",
-                                                            "width": 2,
-                                                        },
-                                                    },
-                                                    name="S&P 500 Index",
-                                                ),
-                                            ],
-                                            "layout": go.Layout(
-                                                autosize=False,
-                                                bargap=0.35,
-                                                font={"family": "Raleway", "size": 10},
-                                                height=200,
-                                                hovermode="closest",
-                                                legend={
-                                                    "x": -0.0228945952895,
-                                                    "y": -0.189563896463,
-                                                    "orientation": "h",
-                                                    "yanchor": "top",
-                                                },
-                                                margin={
-                                                    "r": 0,
-                                                    "t": 20,
-                                                    "b": 10,
-                                                    "l": 10,
-                                                },
-                                                showlegend=True,
-                                                title="",
-                                                width=330,
-                                                xaxis={
-                                                    "autorange": True,
-                                                    "range": [-0.5, 4.5],
-                                                    "showline": True,
-                                                    "title": "",
-                                                    "type": "category",
-                                                },
-                                                yaxis={
-                                                    "autorange": True,
-                                                    "range": [0, 22.9789473684],
-                                                    "showgrid": True,
-                                                    "showline": True,
-                                                    "title": "",
-                                                    "type": "linear",
-                                                    "zeroline": False,
-                                                },
-                                            ),
-                                        },
-                                        config={"displayModeBar": False},
+                                    dcc.Graph(figure=graphs.get_pie_chart(df_selected)),
+                                ],
+                                className="six columns",
+                            ),
+                        ],
+                        className="row",
+                        style={"margin-bottom": "35px"},
+                    ),
+                    # Row 4
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.H6(
+                                        ["Características Población"], className="subtitle padded"
                                     ),
+                                    html.Table(make_dash_table(graphs.get_stats_people(selection))),
+                                ],
+                                className="six columns",
+                            ),
+                            html.Div(
+                                [
+                                    html.H6(
+                                        "Evolución VAB 2017-2020",
+                                        className="subtitle padded",
+                                    ),
+                                    dcc.Graph(figure=graphs.get_line_chart(vab_selected)),
                                 ],
                                 className="six columns",
                             ),
@@ -175,93 +106,10 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        "Hypothetical growth of $10,000",
+                                        "Índice de Prosperidad Territorial 2021",
                                         className="subtitle padded",
                                     ),
-                                    dcc.Graph(
-                                        id="graph-2",
-                                        figure={
-                                            "data": [
-                                                go.Scatter(
-                                                    x=[
-                                                        "2008",
-                                                        "2009",
-                                                        "2010",
-                                                        "2011",
-                                                        "2012",
-                                                        "2013",
-                                                        "2014",
-                                                        "2015",
-                                                        "2016",
-                                                        "2017",
-                                                        "2018",
-                                                    ],
-                                                    y=[
-                                                        "10000",
-                                                        "7500",
-                                                        "9000",
-                                                        "10000",
-                                                        "10500",
-                                                        "11000",
-                                                        "14000",
-                                                        "18000",
-                                                        "19000",
-                                                        "20500",
-                                                        "24000",
-                                                    ],
-                                                    line={"color": "#97151c"},
-                                                    mode="lines",
-                                                    name="Calibre Index Fund Inv",
-                                                )
-                                            ],
-                                            "layout": go.Layout(
-                                                autosize=True,
-                                                title="",
-                                                font={"family": "Raleway", "size": 10},
-                                                height=200,
-                                                width=340,
-                                                hovermode="closest",
-                                                legend={
-                                                    "x": -0.0277108433735,
-                                                    "y": -0.142606516291,
-                                                    "orientation": "h",
-                                                },
-                                                margin={
-                                                    "r": 20,
-                                                    "t": 20,
-                                                    "b": 20,
-                                                    "l": 50,
-                                                },
-                                                showlegend=True,
-                                                xaxis={
-                                                    "autorange": True,
-                                                    "linecolor": "rgb(0, 0, 0)",
-                                                    "linewidth": 1,
-                                                    "range": [2008, 2018],
-                                                    "showgrid": False,
-                                                    "showline": True,
-                                                    "title": "",
-                                                    "type": "linear",
-                                                },
-                                                yaxis={
-                                                    "autorange": False,
-                                                    "gridcolor": "rgba(127, 127, 127, 0.2)",
-                                                    "mirror": False,
-                                                    "nticks": 4,
-                                                    "range": [0, 30000],
-                                                    "showgrid": True,
-                                                    "showline": True,
-                                                    "ticklen": 10,
-                                                    "ticks": "outside",
-                                                    "title": "$",
-                                                    "type": "linear",
-                                                    "zeroline": False,
-                                                    "zerolinewidth": 4,
-                                                },
-                                            ),
-                                        },
-                                        config={"displayModeBar": False},
-                                    ),
+                                    html.Table(make_dash_table(graphs.get_index_prosperity(selection))),
                                 ],
                                 className="six columns",
                             ),
@@ -271,19 +119,33 @@ def create_layout(app):
                                         "Price & Performance (%)",
                                         className="subtitle padded",
                                     ),
-                                    html.Table(make_dash_table(df_price_perf)),
+                                    dcc.Graph(figure=graphs.get_bar_chart(df_vab_2020)),
+                                ],
+                                className="six columns",
+                            ),
+                        ],
+                        className="row ",
+                    ),
+                    # Row 6
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.H6(
+                                        "Acceso a Servicios",
+                                        className="subtitle padded",
+                                    ),
+                                    html.Table(make_dash_table(graphs.get_service_access(selection))),
                                 ],
                                 className="six columns",
                             ),
                             html.Div(
                                 [
                                     html.H6(
-                                        "Risk Potential", className="subtitle padded"
+                                        "Infraestructura de Salud",
+                                        className="subtitle padded",
                                     ),
-                                    html.Img(
-                                        src=app.get_asset_url("risk_reward.png"),
-                                        className="risk-reward",
-                                    ),
+                                    html.Table(make_dash_table(graphs.get_health_infrastructure(selection))),
                                 ],
                                 className="six columns",
                             ),
@@ -296,3 +158,4 @@ def create_layout(app):
         ],
         className="page",
     )
+

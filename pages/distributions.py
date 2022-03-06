@@ -1,4 +1,4 @@
-import dash_html_components as html
+from dash import dcc, html
 from utils import Header, make_dash_table
 import pandas as pd
 import pathlib
@@ -12,10 +12,10 @@ df_realized = pd.read_csv(DATA_PATH.joinpath("df_realized.csv"))
 df_unrealized = pd.read_csv(DATA_PATH.joinpath("df_unrealized.csv"))
 
 
-def create_layout(app):
+def create_layout(app,value):
     return html.Div(
         [
-            Header(app),
+            Header(app,value),
             # page 5
             html.Div(
                 [

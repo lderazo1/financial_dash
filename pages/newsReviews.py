@@ -1,11 +1,12 @@
-import dash_html_components as html
+from dash import Dash, dcc, html, Input, Output
+
 from utils import Header
 
 
-def create_layout(app):
+def create_layout(app,value):
     return html.Div(
         [
-            Header(app),
+            Header(app,value),
             # page 6
             html.Div(
                 [

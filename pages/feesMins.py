@@ -1,5 +1,4 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import plotly.graph_objs as go
 
 from utils import Header, make_dash_table
@@ -14,10 +13,10 @@ df_expenses = pd.read_csv(DATA_PATH.joinpath("df_expenses.csv"))
 df_minimums = pd.read_csv(DATA_PATH.joinpath("df_minimums.csv"))
 
 
-def create_layout(app):
+def create_layout(app,value):
     return html.Div(
         [
-            Header(app),
+            Header(app,value),
             # page 4
             html.Div(
                 [

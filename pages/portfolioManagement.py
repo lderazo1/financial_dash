@@ -1,5 +1,4 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import Dash, dcc, html, Input, Output
 import plotly.graph_objs as go
 
 from utils import Header, make_dash_table
@@ -14,10 +13,10 @@ df_equity_char = pd.read_csv(DATA_PATH.joinpath("df_equity_char.csv"))
 df_equity_diver = pd.read_csv(DATA_PATH.joinpath("df_equity_diver.csv"))
 
 
-def create_layout(app):
+def create_layout(app,value):
     return html.Div(
         [
-            Header(app),
+            Header(app,value),
             # page 3
             html.Div(
                 [

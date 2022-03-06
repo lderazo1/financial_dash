@@ -1,12 +1,10 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 
 
-def Header(app):
-    return html.Div([get_header(app), html.Br([]), get_menu()])
+def Header(app,value):
+    return html.Div([get_header(app,value), html.Br([]), get_menu()])
 
-
-def get_header(app):
+def get_header(app,value):
     header = html.Div(
         [
             html.Div(
@@ -41,7 +39,7 @@ def get_header(app):
             html.Div(
                 [
                     html.Div(
-                        [html.H5("Calibre Financial Index Fund Investor Shares")],
+                        [html.H5("Cantón "+value)],
                         className="seven columns main-title",
                     ),
                     html.Div(

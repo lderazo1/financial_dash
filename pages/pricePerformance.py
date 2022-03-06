@@ -1,5 +1,4 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import plotly.graph_objs as go
 from utils import Header, make_dash_table
 import pandas as pd
@@ -18,10 +17,10 @@ df_recent_returns = pd.read_csv(DATA_PATH.joinpath("df_recent_returns.csv"))
 df_graph = pd.read_csv(DATA_PATH.joinpath("df_graph.csv"))
 
 
-def create_layout(app):
+def create_layout(app,value):
     return html.Div(
         [
-            Header(app),
+            Header(app,value),
             # page 2
             html.Div(
                 [
