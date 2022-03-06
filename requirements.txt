@@ -17,6 +17,7 @@ geopandas==0.10.2
 google-auth==2.6.0
 google-auth-oauthlib==0.5.0
 gspread==5.2.0
+gunicorn
 httplib2==0.20.4
 idna==3.3
 itsdangerous==2.1.0
